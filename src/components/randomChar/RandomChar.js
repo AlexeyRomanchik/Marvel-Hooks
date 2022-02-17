@@ -2,49 +2,26 @@ import './randomChar.scss';
 import mjolnir from '../../resources/img/mjolnir.png';
 import { useState, useEffect } from 'react';
 import Spinner from '../spinner/Spinner'
-import MarvelService from '../../services/MarvelService';
+import useMarvelService from '../../services/MarvelService';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 
 const RandomChar = () => {
     const [character, setCharacter] = useState({}),
-        [loading, setLoading] = useState(true),
-        [error, setError] = useState(false);
-
-    const marvelService = new MarvelService();
+        { getCharacter, loading, error } = useMarvelService();
 
     useEffect(() => {
         updateChar();
     }, []);
 
-    const onError = () => {
-        setCharacter({});
-        setLoading(false);
-        setError(true);
-    }
-
-    const resetLoading = () => {
-        setLoading(true);
-        setError(false);
-    }
-
     const updateChar = () => {
         const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
 
-        resetLoading();
-
-        marvelService.getCharacter(id)
-            .then(character => onCharacterLoaded(character))
-            .catch(onError);
-    }
-
-    const onCharacterLoaded = (character) => {
-        setCharacter(character);
-        setLoading(false);
+        getCharacter(id).then(character => setCharacter(character))
     }
 
     const errorMessage = error ? <ErrorMessage /> : null;
     const spinner = loading ? <Spinner /> : null;
-    const content = !(loading || error) ? <RandomCharView character={character} /> : null;
+    const content = !(loading || error || !character) ? <RandomCharView character={character} /> : null;
 
     return (
         <div className="randomchar">
@@ -72,8 +49,8 @@ const RandomChar = () => {
 
 const RandomCharView = ({ character }) => {
     const { name, description, thunbnail, homepage, wiki } = character;
-
-    const imageStyle = character.thunbnail.indexOf("image_not_available.jpg") > -1 ?
+    
+    const imageStyle = thunbnail?.indexOf("image_not_available.jpg") > -1 ?
         { objectFit: "fill" } : null;
 
     return (
