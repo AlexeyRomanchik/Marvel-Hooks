@@ -5,6 +5,7 @@ import Skeleton from '../skeleton/Skeleton';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import Spinner from '../spinner/Spinner';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
 const CharInfo = ({ id }) => {
     const [character, setCharacter] = useState(null),
@@ -72,10 +73,14 @@ const CharInfoView = ({ character }) => {
             <ul className="char__comics-list">
                 {comics.length > 0 ? null : "There is no comics with this character"}
                 {comics.map((item, index) => {
+                    const comicsId = item.resourceURI.match(/\/\d+/);
                     return (
-                        <li key={index} className="char__comics-item">
-                            {item.name}
+                        <li key={index}>
+                            <Link className="char__comics-item" to={`/comics${comicsId}`}>
+                                {item.name}
+                            </Link>
                         </li>
+
                     )
                 })}
             </ul>
