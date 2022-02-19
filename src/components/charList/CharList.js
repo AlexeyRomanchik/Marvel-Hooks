@@ -4,6 +4,7 @@ import useMarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner'
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import PropTypes from 'prop-types';
+import {CSSTransition, TransitionGroup} from 'react-transition-group';
 
 const CharList = ({ onCharSelected }) => {
     const [characters, setCharacters] = useState([]),
@@ -50,7 +51,8 @@ const CharList = ({ onCharSelected }) => {
                 { objectFit: "fill" } : null;
 
             return (
-                <li className="char__item"
+                <CSSTransition key={character.id} timeout={500} classNames="char__item">
+                    <li className="char__item"
                     key={character.id}
                     tabIndex={0}
                     onClick={() => {
@@ -68,12 +70,15 @@ const CharList = ({ onCharSelected }) => {
                         style={imageStyle} />
                     <div className="char__name">{character.name}</div>
                 </li>
+                </CSSTransition>
             );
         });
 
         return (
             <ul className="char__grid">
+                <TransitionGroup component={null}>
                 {listCharacters}
+                </TransitionGroup>
             </ul>
         );
     }
