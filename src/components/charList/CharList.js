@@ -1,5 +1,5 @@
 import './charList.scss';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import useMarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner'
 import ErrorMessage from '../errorMessage/ErrorMessage';
@@ -101,9 +101,13 @@ const CharList = ({ onCharSelected }) => {
         );
     }
 
+    const items = useMemo(() => {
+        return setContent(process, () => renderCharacters(characters), itemsLoading);
+    }, [process]);
+
     return (
         <div className="char__list">
-            {setContent(process, () => renderCharacters(characters), itemsLoading)}
+            {items}
             <button className="button button__main button__long"
                 disabled={itemsLoading}
                 style={{ display: charactersEnded ? "none" : "block" }}

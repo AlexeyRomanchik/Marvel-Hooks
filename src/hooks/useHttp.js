@@ -8,15 +8,11 @@ export const state = {
 }
 
 export const useHttp = () => {
-    const [loading, setLoading] = useState(false),
-        [error, setError] = useState(null),
-        [process, setProcess] = useState(state.waiting);
+    const [process, setProcess] = useState(state.waiting);
 
     const request = useCallback(async (url, method = 'GET', body = null,
         headers = { 'Content-Type': 'application/json' }) => {
 
-        setError(null);
-        setLoading(true);
         setProcess(state.loading);
 
         try {
@@ -28,13 +24,10 @@ export const useHttp = () => {
 
             return await response.json();
         } catch (e) {
-            setError(e.message);
             setProcess(state.error);
             throw e;
-        } finally {
-            setLoading(false);
         }
     }, []);
 
-    return { loading, error, request, process, setProcess };
+    return { request, process, setProcess };
 }

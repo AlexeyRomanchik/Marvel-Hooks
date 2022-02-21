@@ -2,8 +2,6 @@ import { useParams, Link } from 'react-router-dom';
 import './singleComicPage.scss';
 import { useEffect, useState } from 'react';
 import useMarvelService from '../../services/MarvelService';
-import ErrorMessage from '../errorMessage/ErrorMessage';
-import Spinner from '../spinner/Spinner';
 import { state } from '../../hooks/useHttp';
 import { setContent } from '../../utils/setContent';
 
