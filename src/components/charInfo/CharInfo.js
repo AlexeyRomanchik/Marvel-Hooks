@@ -1,15 +1,14 @@
 import './charInfo.scss';
 import { useEffect, useState } from 'react';
 import useMarvelService from '../../services/MarvelService';
-import Skeleton from '../skeleton/Skeleton';
-import ErrorMessage from '../errorMessage/ErrorMessage';
-import Spinner from '../spinner/Spinner';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import { setContent } from '../../utils/setContent';
+import { state } from '../../hooks/useHttp';
 
 const CharInfo = ({ id }) => {
     const [character, setCharacter] = useState(null),
-        { getCharacter, loading, error } = useMarvelService();
+        { getCharacter, process, setProcess } = useMarvelService();
 
     useEffect(() => {
         updateChar();
@@ -19,33 +18,27 @@ const CharInfo = ({ id }) => {
         if (!id) {
             return;
         }
-        getCharacter(id).then(onCharacterLoaded)
+        getCharacter(id)
+            .then(onCharacterLoaded)
+            .then(() => setProcess(state.confirmed));
     }
 
     const onCharacterLoaded = (character) => {
         setCharacter(character);
     }
 
-    const skeleton = character || error || loading ? null : <Skeleton />
-    const errorMessage = error ? <ErrorMessage /> : null;
-    const spinner = loading ? <Spinner /> : null;
-    const content = !(loading || error || !character) ? <CharInfoView character={character} /> : null;
-
     return (
         <div className="char__info">
-            {skeleton}
-            {errorMessage}
-            {spinner}
-            {content}
+            {setContent(process, CharInfoView, character)}
         </div>
     )
 
 }
 
-const CharInfoView = ({ character }) => {
-    const { name, description, thunbnail, homepage, wiki, comics } = character;
+const CharInfoView = ({ data }) => {
+    const { name, description, thunbnail, homepage, wiki, comics } = data;
 
-    const imageStyle = character.thunbnail.indexOf("image_not_available.jpg") > -1 ?
+    const imageStyle = data.thunbnail.indexOf("image_not_available.jpg") > -1 ?
         { objectFit: "fill" } : null;
 
     return (
